@@ -1,5 +1,5 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, WebRtcMode
+from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, WebRtcMode, VideoHTMLAttributes
 import av
 
 st.title("Streamlit Kamera App")
@@ -26,12 +26,20 @@ class VideoTransformer(VideoTransformerBase):
 
 # WebRTC Streamer
 webrtc_streamer(
-    key="camera",
+    key="example",
     mode=WebRtcMode.SENDRECV,
-    video_processor_factory=VideoTransformer,
     media_stream_constraints={
         "video": {
-            "facingMode": {"exact": st.session_state.camera_type}
-        }
-    }
+            "facingMode": {"exact": "user"}  # Frontkamera auswählen
+        },
+        "audio": False
+    },
+    rtc_configuration={
+        "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+    },
+    video_html_attrs=VideoHTMLAttributes(
+        autoPlay=True,
+        controls=False,
+        style={"width": "100%", "height": "calc(100vh - 120px)", "object-fit": "cover", "transform": "rotate(90deg)", "z-index": "1"}  # Vertikale Ausrichtung
+    )
 )
