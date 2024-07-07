@@ -60,7 +60,23 @@ webrtc_streamer(
 # Platz für zusätzlichen Streamlit-Inhalt oben und unten
 st.write("Additional Streamlit content can go here...")
 
-# Knopf zum Ändern des Hintergrunds in der Mitte unten
+# Knöpfe zum Ausführen von Aktionen
+if st.button("Change Background"):
+    if uploaded_file is not None:
+        st.session_state['background_img'] = cv2.resize(image, (640, 480))
+    else:
+        st.warning("Please upload a background image first.")
+
+if st.button("Action 1"):
+    st.write("Action 1 executed")
+
+if st.button("Action 2"):
+    st.write("Action 2 executed")
+
+if st.button("Action 3"):
+    st.write("Action 3 executed")
+
+# CSS für die Knöpfe unten auf der Seite
 st.markdown(
     """
     <style>
@@ -68,7 +84,9 @@ st.markdown(
         position: fixed;
         bottom: 20px;
         width: 100%;
-        text-align: center;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
         z-index: 9999;
     }
     .button-container button {
@@ -86,10 +104,13 @@ st.markdown(
     </style>
     """, unsafe_allow_html=True)
 
-st.markdown('<div class="button-container"><button onclick="window.streamlitChangeBackground()">Change Background</button></div>', unsafe_allow_html=True)
-
-if st.button("Change Background"):
-    if uploaded_file is not None:
-        st.session_state['background_img'] = cv2.resize(image, (640, 480))
-    else:
-        st.warning("Please upload a background image first.")
+# Platzhalter für die Knöpfe
+st.markdown(
+    '<div class="button-container">'
+    '<button onclick="window.streamlitChangeBackground()">Change Background</button>'
+    '<button onclick="window.streamlitAction1()">Action 1</button>'
+    '<button onclick="window.streamlitAction2()">Action 2</button>'
+    '<button onclick="window.streamlitAction3()">Action 3</button>'
+    '</div>', 
+    unsafe_allow_html=True
+)
