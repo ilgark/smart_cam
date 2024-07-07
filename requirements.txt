@@ -1,5 +1,8 @@
 streamlit
-opencv-python-headless
+# opencv-python-headless
 numpy
 streamlit_webrtc
 pyarrow
+mediapipe
+opencv-contrib-python
+opencv-python
