@@ -36,6 +36,20 @@ if uploaded_file is not None:
     image = cv2.imdecode(file_bytes, 1)
     st.session_state['background_img'] = cv2.resize(image, (640, 480))
 
+# State für Kameraauswahl
+if 'use_front_camera' not in st.session_state:
+    st.session_state['use_front_camera'] = True
+
+def switch_camera():
+    st.session_state['use_front_camera'] = not st.session_state['use_front_camera']
+
+# Button zum Wechseln der Kamera
+camera_button_label = "Switch to Rear Camera" if st.session_state['use_front_camera'] else "Switch to Front Camera"
+st.button(camera_button_label, on_click=switch_camera)
+
+# Kamera-Einstellung
+camera_facing_mode = "user" if st.session_state['use_front_camera'] else "environment"
+
 # WebRTC-Streamer einrichten
 webrtc_streamer(
     key="example",
@@ -43,7 +57,7 @@ webrtc_streamer(
     video_frame_callback=replace_background,
     media_stream_constraints={
         "video": {
-            "facingMode": {"exact": "user"}  # Frontkamera auswählen
+            "facingMode": {"exact": camera_facing_mode}
         },
         "audio": False
     },
