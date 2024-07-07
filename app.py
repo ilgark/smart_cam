@@ -53,6 +53,6 @@ webrtc_streamer(
     video_html_attrs=VideoHTMLAttributes(
         autoPlay=True,
         controls=False,
-        style={"width": "100%", "height": "80vh", "object-fit": "cover", "z-index": "1"}  # Setzt das Video auf 80% der Bildschirmhöhe
+        style={"width": "100%", "height": "200vh", "object-fit": "cover", "z-index": "1"}  # Setzt das Video auf 90% der Bildschirmhöhe
     )
 )
