@@ -1,33 +1,38 @@
+import cv2
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, WebRtcMode, VideoHTMLAttributes
+from streamlit_webrtc import webrtc_streamer, VideoHTMLAttributes, WebRtcMode
+import numpy as np
 import av
 
-st.title("Streamlit Kamera App")
+st.set_page_config(layout="wide")
 
-# Speicherung des aktuellen Kamera-Typs im Session State
-if "camera_type" not in st.session_state:
-    st.session_state.camera_type = "user"  # Standardmäßig vordere Kamera
+st.title("Background Replacement with OpenCV")
 
-# Funktion zum Umschalten der Kamera
-def switch_camera():
-    if st.session_state.camera_type == "user":
-        st.session_state.camera_type = "environment"
-    else:
-        st.session_state.camera_type = "user"
+# Initialer Zustand des Hintergrunds
+if 'background_img' not in st.session_state:
+    st.session_state['background_img'] = np.zeros((480, 640, 3), dtype=np.uint8)
 
-# Knopf zum Umschalten der Kamera
-st.button("Wechsel Kamera", on_click=switch_camera)
+# Funktion zur Hintergrundersetzung
+def replace_background(frame: av.VideoFrame) -> av.VideoFrame:
+    img = frame.to_ndarray(format="bgr24")
 
-# Transformator Klasse zur Verarbeitung der Videodaten
-class VideoTransformer(VideoTransformerBase):
-    def recv(self, frame):
-        img = frame.to_ndarray(format="bgr24")
-        return av.VideoFrame.from_ndarray(img, format="bgr24")
+    # Hintergrundsubtraktion (Beispiel: einfache Farbschwelle)
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    mask = cv2.inRange(hsv, np.array([35, 100, 100]), np.array([85, 255, 255]))  # Beispiel für grüne Farbe
+    mask_inv = cv2.bitwise_not(mask)
+    
+    fg = cv2.bitwise_and(img, img, mask=mask_inv)
+    bg = cv2.bitwise_and(st.session_state['background_img'], st.session_state['background_img'], mask=mask)
+    
+    combined = cv2.add(fg, bg)
 
-# WebRTC Streamer
+    return av.VideoFrame.from_ndarray(combined, format="bgr24")
+
+# WebRTC-Streamer einrichten
 webrtc_streamer(
     key="example",
     mode=WebRtcMode.SENDRECV,
+    video_frame_callback=replace_background,
     media_stream_constraints={
         "video": {
             "facingMode": {"exact": "user"}  # Frontkamera auswählen
