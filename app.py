@@ -53,7 +53,7 @@ webrtc_streamer(
     video_html_attrs=VideoHTMLAttributes(
         autoPlay=True,
         controls=False,
-        style={"width": "100%", "height": "80vh", "object-fit": "cover", "z-index": "1"}  # Setzt das Video auf 80% der Bildschirmhöhe
+        style={"width": "100%", "height": "calc(100vh - 120px)", "object-fit": "cover", "transform": "rotate(90deg)", "z-index": "1"}  # Vertikale Ausrichtung
     )
 )
 
