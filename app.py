@@ -28,6 +28,14 @@ def replace_background(frame: av.VideoFrame) -> av.VideoFrame:
 
     return av.VideoFrame.from_ndarray(combined, format="bgr24")
 
+# Funktion zum Hochladen und Einstellen des neuen Hintergrundbildes
+uploaded_file = st.file_uploader("Upload a background image", type=["jpg", "jpeg", "png"])
+
+if uploaded_file is not None:
+    file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
+    image = cv2.imdecode(file_bytes, 1)
+    st.session_state['background_img'] = cv2.resize(image, (640, 480))
+
 # WebRTC-Streamer einrichten
 webrtc_streamer(
     key="example",
@@ -45,6 +53,6 @@ webrtc_streamer(
     video_html_attrs=VideoHTMLAttributes(
         autoPlay=True,
         controls=False,
-        style={"width": "100%", "height": "calc(100vh - 120px)", "object-fit": "cover", "z-index": "1"}  # Vertikale Ausrichtung
+        style={"width": "100%", "height": "80vh", "object-fit": "cover", "z-index": "1"}  # Setzt das Video auf 80% der Bildschirmhöhe
     )
 )
